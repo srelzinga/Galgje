@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Galgje</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #333333;
+      }
+
+      #word {
+        margin-bottom: 10px;
+        font-size: 24px;
+        text-align: center;
+        color: #333333;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        color: #666666;
+        font-weight: bold;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: #4caf50;
+        color: #ffffff;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      #incorrectGuesses {
+        margin-top: 20px;
+        color: #ff0000;
+        font-weight: bold;
+      }
+
+      .message {
+        margin-top: 20px;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+
+      .message-success {
+        background-color: #4caf50;
+        color: #ffffff;
+      }
+
+      .message-failure {
+        background-color: #ff0000;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Galgje</h1>
+      <div id="word"></div>
+      <label for="guessInput">Raad een letter:</label>
+      <input type="text" id="guessInput" />
+      <button onclick="guessLetter()">Raden</button>
+      <div id="incorrectGuesses"></div>
+      <div id="message"></div>
+    </div>
+
+    <script>
+      // Lijst met woorden
+      var words = ["galgje", "javascript", "computer", "programmeren", "github"];
+      // Willekeurig een woord selecteren
+      var word = words[Math.floor(Math.random() * words.length)];
+      // Array om correcte pogingen op te slaan
+      var guessedLetters = [];
+      // Array om incorrecte pogingen op te slaan
+      var incorrectLetters = [];
+
+      // Functie om het spel te initialiseren
+      function init() {
+        // Wis correcte pogingen
+        guessedLetters = [];
+        // Wis incorrecte pogingen
+        incorrectLetters = [];
+        // Toon de initiële staat van het woord
+        updateWord();
+        // Wis het bericht
+        document.getElementById("message").textContent = "";
+      }
+
+      // Functie om het getoonde woord bij te werken
+      function updateWord() {
+        var displayWord = "";
+        for (var i = 0; i < word.length; i++) {
+          if (guessedLetters.includes(word[i])) {
+            displayWord += word[i] + " ";
+          } else {
+            displayWord += "_ ";
+          }
+        }
+        document.getElementById("word").textContent = displayWord;
+      }
+
+      // Functie om letterpogingen af te handelen
+      function guessLetter() {
+        var guessInput = document.getElementById("guessInput");
+        var letter = guessInput.value.toLowerCase();
+
+        // Controleren of de letter al geraden is
+        if (guessedLetters.includes(letter)) {
+          displayMessage("Je hebt die letter al geraden.", "failure");
+          guessInput.value = "";
+          return;
+        }
+
+        // Controleren of de letter in het woord zit
+        if (word.includes(letter)) {
+          guessedLetters.push(letter);
+        } else {
+          incorrectLetters.push(letter);
+        }
+
+        // Het getoonde woord bijwerken
+        updateWord();
+
+        // Incorrecte pogingen bijwerken
+        document.getElementById("incorrectGuesses").textContent =
+          "Incorrecte Pogingen: " + incorrectLetters.join(", ");
+
+        // Controleren of het spel voorbij is
+        if (guessedLetters.length === word.length) {
+          displayMessage("Gefeliciteerd! Je hebt gewonnen!", "success");
+          init();
+        } else if (incorrectLetters.length === 6) {
+          displayMessage("Spel Voorbij! Het woord was: " + word, "failure");
+          init();
+        }
+
+        // Het invoerveld leegmaken
+        guessInput.value = "";
+      }
+
+      // Functie om berichten weer te geven
+      function displayMessage(text, messageType) {
+        var messageElement = document.getElementById("message");
+        messageElement.textContent = text;
+        messageElement.className = "message message-" + messageType;
+      }
+
+      // Het spel starten
+      init();
+    </script>
+  </body>
+</html>
